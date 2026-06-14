@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Codify - Competitive Coding & Mastery</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- CodeMirror CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark-theme">
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-logo">
+        <i class="fa-solid fa-terminal"></i>
+      </div>
+      <span class="brand-text"><span class="accent-text">CODIFY</span></span>
+    </div>
+    <nav class="sidebar-menu">
+      <a href="#" class="menu-item active" data-view="dashboard">
+        <i class="fa-solid fa-chart-line"></i>
+        <span>Dashboard</span>
+      </a>
+      <a href="#" class="menu-item" data-view="quests">
+        <i class="fa-solid fa-map-signs"></i>
+        <span>Mastery Quests</span>
+      </a>
+      <a href="#" class="menu-item" data-view="trials">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span>Arena Trials</span>
+      </a>
+      <a href="#" class="menu-item" data-view="clashes">
+        <i class="fa-solid fa-trophy"></i>
+        <span>Weekly Clashes</span>
+      </a>
+      <a href="#" class="menu-item" data-view="profile">
+        <i class="fa-solid fa-user-ninja"></i>
+        <span>Codify Profile</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-pill" onclick="app.switchView('profile')" style="cursor: pointer; transition: var(--transition-smooth); background-color: rgba(255, 255, 255, 0.02);" onmouseover="this.style.backgroundColor='rgba(255,255,255,0.06)'" onmouseout="this.style.backgroundColor='rgba(255,255,255,0.02)'">
+        <div class="user-avatar">R</div>
+        <div class="user-info">
+          <span class="user-name">Ria</span>
+          <span class="user-rank">Novice Coder</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Work Area -->
+  <main class="main-content">
+    <!-- Header -->
+    <header class="main-header">
+      <div class="header-left">
+        <h1 id="page-title">Dashboard</h1>
+        <p id="page-subtitle" class="text-muted">Welcome back, Coder. Your coding odyssey awaits.</p>
+      </div>
+      <div class="header-right">
+        <div class="stat-badge">
+          <i class="fa-solid fa-fire text-orange"></i>
+          <span id="streak-count">0 Days</span>
+        </div>
+        <div class="stat-badge">
+          <i class="fa-solid fa-star text-yellow"></i>
+          <span id="points-count">0 XP</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content View Wrapper -->
+    <div class="view-container">
+      
+      <!-- DASHBOARD VIEW -->
+      <section id="view-dashboard" class="content-view active">
+        <div class="welcome-banner">
+          <div class="banner-content">
+            <h2>Embark on Your Next Challenge</h2>
+            <p>Elevate your Data Structures, Algorithms, and Language proficiency. Complete tracks, win Weekly Clashes, and earn your place on the global leaderboard.</p>
+            <button class="btn btn-primary" onclick="app.switchView('quests')">
+              Start a Mastery Quest <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+          <div class="banner-visual">
+            <i class="fa-solid fa-brain"></i>
+          </div>
+        </div>
+
+        <div class="grid-layout cols-3 gap-4">
+          <!-- Stats Summary Card -->
+          <div class="card glass-card">
+            <h3>Progress Summary</h3>
+            <div class="progress-stats">
+              <div class="progress-ring-container">
+                <svg class="progress-ring" width="120" height="120">
+                  <circle class="progress-ring__circle-bg" stroke="rgba(255,255,255,0.05)" stroke-width="8" fill="transparent" r="50" cx="60" cy="60"/>
+                  <circle id="dashboard-progress-ring" class="progress-ring__circle" stroke="#10b981" stroke-width="8" fill="transparent" r="50" cx="60" cy="60" stroke-dasharray="314.16 314.16" stroke-dashoffset="314.16"/>
+                </svg>
+                <div class="progress-ring-text">
+                  <span id="total-progress-percentage">0%</span>
+                  <span class="subtext">Solved</span>
+                </div>
+              </div>
+              <div class="progress-stats-details">
+                <div class="stat-row">
+                  <span class="dot dsa-dot"></span>
+                  <span>DSA Quests:</span>
+                  <span id="stat-dsa-count" class="stat-val">0/2</span>
+                </div>
+                <div class="stat-row">
+                  <span class="dot lang-dot"></span>
+                  <span>Lang Mastery:</span>
+                  <span id="stat-lang-count" class="stat-val">0/2</span>
+                </div>
+                <div class="stat-row">
+                  <span class="dot company-dot"></span>
+                  <span>Company Prep:</span>
+                  <span id="stat-company-count" class="stat-val">0/2</span>
+                </div>
+                <div class="stat-row">
+                  <span class="dot dp-dot"></span>
+                  <span>Algo Voyage:</span>
+                  <span id="stat-dp-count" class="stat-val">0/2</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Launch Contest Card -->
+          <div class="card glass-card contest-preview-card">
+            <div class="card-badge">LIVE</div>
+            <h3>Active Weekly Clash</h3>
+            <div class="contest-details">
+              <h4>Codify Clash #24</h4>
+              <div class="time-counter">
+                <span class="label">ENDS IN:</span>
+                <span id="clash-timer" class="time-value">2d 14h 32m</span>
+              </div>
+              <p class="description">Solve 3 algorithmic challenges in 90 minutes. Top rank earns the "Grandmaster" badge and +500 XP.</p>
+              <button class="btn btn-secondary btn-full" onclick="app.switchView('clashes')">
+                Enter Arena <i class="fa-solid fa-right-to-bracket"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Arena Trials Card -->
+          <div class="card glass-card">
+            <h3>Arena Trials</h3>
+            <p class="text-muted">Put your skills to the test with time-boxed assessments and claim skill badges.</p>
+            <div class="badges-showcase">
+              <div class="badge-item locked" id="badge-dsa-status">
+                <i class="fa-solid fa-shield-halved text-muted"></i>
+                <span>DSA Elite</span>
+              </div>
+              <div class="badge-item locked" id="badge-python-status">
+                <i class="fa-solid fa-code text-muted"></i>
+                <span>Python Sage</span>
+              </div>
+            </div>
+            <button class="btn btn-primary btn-outline btn-full" onclick="app.switchView('trials')">
+              View Available Trials
+            </button>
+          </div>
+        </div>
+
+        <div class="recent-activity-section margin-top-4">
+          <div class="section-header">
+            <h3>Recent Submissions</h3>
+            <a href="#" class="link-btn" onclick="app.switchView('profile')">View Profile Heatmap</a>
+          </div>
+          <div class="card glass-card table-card">
+            <div class="empty-state" id="empty-submissions">
+              <i class="fa-regular fa-folder-open"></i>
+              <p>No submissions yet. Start coding to light up your heatmap!</p>
+            </div>
+            <table class="data-table" id="submissions-table" style="display: none;">
+              <thead>
+                <tr>
+                  <th>Problem</th>
+                  <th>Category</th>
+                  <th>Language</th>
+                  <th>Status</th>
+                  <th>Execution Time</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody id="submissions-tbody">
+                <!-- submissions dynamically loaded -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- MASTERY QUESTS VIEW -->
+      <section id="view-quests" class="content-view">
+        <div class="quests-categories-tabs">
+          <button class="tab-btn active" data-quest-cat="all">All Quests</button>
+          <button class="tab-btn" data-quest-cat="dsa">DSA Tracks</button>
+          <button class="tab-btn" data-quest-cat="language">Language Mastery</button>
+          <button class="tab-btn" data-quest-cat="company">Company Prep</button>
+          <button class="tab-btn" data-quest-cat="algorithm">Algorithmic Voyages</button>
+        </div>
+
+        <div class="grid-layout cols-2 gap-4 margin-top-3" id="quests-list-container">
+          <!-- Dynamic paths cards loaded here -->
+        </div>
+      </section>
+
+      <!-- ARENA TRIALS VIEW -->
+      <section id="view-trials" class="content-view">
+        <div class="welcome-banner trials-banner">
+          <div class="banner-content">
+            <h2>Proving Grounds: Arena Trials</h2>
+            <p>Prove your coding mastery under exam conditions. Solve challenging coding questions within a strict time limit to earn verified skill badges.</p>
+          </div>
+        </div>
+        
+        <div class="grid-layout cols-2 gap-4 margin-top-3" id="trials-list-container">
+          <!-- Trials dynamically loaded -->
+        </div>
+      </section>
+
+      <!-- WEEKLY CLASHES VIEW -->
+      <section id="view-clashes" class="content-view">
+        <div class="clash-header-hero">
+          <div class="clash-hero-details">
+            <div class="clash-status-pill">CONTEST RUNNING</div>
+            <h2>Codify Clash #24: Algorithmic Blitz</h2>
+            <p class="clash-timer-large">Time Remaining: <span id="clash-clock">01h 24m 50s</span></p>
+            <div class="clash-leaderboard-preview">
+              <span class="preview-title">Your rank:</span>
+              <span class="rank-value" id="user-clash-rank">Unranked</span>
+              <span class="divider">|</span>
+              <span class="preview-title">Leader:</span>
+              <span class="leader-name"><i class="fa-solid fa-crown text-yellow"></i> code_lord_99 (300 pts)</span>
+            </div>
+            <button class="btn btn-primary" id="btn-join-clash" onclick="app.startWeeklyClash()">
+              Join Codify Clash Now
+            </button>
+          </div>
+        </div>
+
+        <div class="grid-layout cols-3 gap-4 margin-top-4" id="clash-problems-grid" style="display: none;">
+          <div class="card glass-card clash-prob-card col-span-2">
+            <h3>Clash Problems</h3>
+            <div class="clash-probs-list">
+              <!-- Clash problems dynamically loaded -->
+            </div>
+          </div>
+          
+          <div class="card glass-card clash-standings-card">
+            <h3>Current Standings</h3>
+            <div class="standings-list">
+              <div class="standing-item leader">
+                <span class="rank">1</span>
+                <span class="name">code_lord_99</span>
+                <span class="points">300 pts</span>
+              </div>
+              <div class="standing-item">
+                <span class="rank">2</span>
+                <span class="name">dsa_ninja</span>
+                <span class="points">260 pts</span>
+              </div>
+              <div class="standing-item">
+                <span class="rank">3</span>
+                <span class="name">byte_bender</span>
+                <span class="points">240 pts</span>
+              </div>
+              <div class="standing-item current-user-row" id="user-standing-row">
+                <span class="rank" id="user-standing-rank">4</span>
+                <span class="name">Ria (You)</span>
+                <span class="points" id="user-standing-pts">0 pts</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PROFILE VIEW -->
+      <section id="view-profile" class="content-view">
+        <!-- ROW 1: USER DETAILS & RATING HISTORY -->
+        <div class="grid-layout cols-3 gap-4">
+          <!-- Profile / Rating Details Card -->
+          <div class="card glass-card profile-details-card" style="display: flex; flex-direction: column; gap: 1rem;">
+            <div style="display: flex; align-items: center; gap: 1.2rem; border-bottom: 1px solid var(--border-glass); padding-bottom: 1rem;">
+              <div class="avatar-large" style="width: 65px; height: 65px; font-size: 1.8rem; margin: 0; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3); flex-shrink: 0;">R</div>
+              <div style="text-align: left; min-width: 0;">
+                <h2 style="margin: 0; font-size: 1.3rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Ria</h2>
+                <div id="profile-star-rating" style="margin: 0.2rem 0; font-size: 0.85rem; display: flex; gap: 2px;">
+                  <!-- Stars populated dynamically -->
+                </div>
+                <span class="badge badge-cyber" id="user-pill-badge" style="margin: 0; font-size: 0.7rem; padding: 0.15rem 0.5rem;">Novice Coder</span>
+              </div>
+            </div>
+            
+            <!-- Rating boxes like CodeChef -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: center;">
+              <div style="background-color: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); border-radius: 8px; padding: 0.6rem;">
+                <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Rating</div>
+                <div id="profile-current-rating" style="font-size: 1.3rem; font-weight: 800; color: #10b981; margin-top: 0.2rem;">1200</div>
+                <div id="profile-division" style="font-size: 0.65rem; color: var(--text-muted); font-weight: 500;">(Div 4)</div>
+              </div>
+              <div style="background-color: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); border-radius: 8px; padding: 0.6rem;">
+                <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Highest</div>
+                <div id="profile-highest-rating" style="font-size: 1.3rem; font-weight: 800; color: var(--accent-blue); margin-top: 0.2rem;">1200</div>
+                <div style="font-size: 0.65rem; color: var(--text-muted); font-weight: 500;">All-time High</div>
+              </div>
+            </div>
+            
+            <!-- Coder Profile Metadata table -->
+            <div style="font-size: 0.8rem; display: flex; flex-direction: column; gap: 0.6rem; border-top: 1px solid var(--border-glass); padding-top: 1rem;">
+              <div style="display: flex; justify-content: space-between;">
+                <span style="color: var(--text-muted);"><i class="fa-solid fa-earth-americas" style="width: 18px;"></i> Country:</span>
+                <span style="font-weight: 600;">🇮🇳 India</span>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span style="color: var(--text-muted);"><i class="fa-solid fa-graduation-cap" style="width: 18px;"></i> Institution:</span>
+                <span style="font-weight: 600; text-align: right; max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="Indian Institute of Technology">IIT Bombay</span>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span style="color: var(--text-muted);"><i class="fa-solid fa-user-tag" style="width: 18px;"></i> User Type:</span>
+                <span style="font-weight: 600;">Student</span>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span style="color: var(--text-muted);"><i class="fa-solid fa-globe" style="width: 18px;"></i> Global Rank:</span>
+                <span style="font-weight: 600;" id="profile-global-rank">#14,302</span>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span style="color: var(--text-muted);"><i class="fa-solid fa-flag" style="width: 18px;"></i> Country Rank:</span>
+                <span style="font-weight: 600;" id="profile-country-rank">#3,902</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Rating Progression Graph Card -->
+          <div class="card glass-card col-span-2" style="display: flex; flex-direction: column; justify-content: space-between; min-height: 320px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-glass); padding-bottom: 0.5rem; margin-bottom: 0.5rem;">
+              <h3 style="margin: 0;">Rating Progression</h3>
+              <span style="font-size: 0.75rem; color: var(--text-muted);">Weekly Clash stats history</span>
+            </div>
+            <!-- SVG chart wrapper -->
+            <div id="rating-chart-wrapper" style="width: 100%; height: 160px; margin-bottom: 0.5rem; position: relative;">
+              <!-- Populated dynamically via JS -->
+            </div>
+            
+            <!-- Mini rating logs table -->
+            <div style="overflow-x: auto; max-height: 120px;">
+              <table class="data-table" style="width: 100%; font-size: 0.75rem; margin: 0; background: transparent;">
+                <thead>
+                  <tr style="border-bottom: 1px solid var(--border-glass);">
+                    <th style="padding: 0.3rem; font-weight: 600; text-align: left;">Contest</th>
+                    <th style="padding: 0.3rem; font-weight: 600; text-align: center;">Rank</th>
+                    <th style="padding: 0.3rem; font-weight: 600; text-align: center;">Rating Change</th>
+                    <th style="padding: 0.3rem; font-weight: 600; text-align: center;">Rating</th>
+                  </tr>
+                </thead>
+                <tbody id="profile-rating-history-table">
+                  <!-- Dynamically populated in app.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ROW 2: SOLVED BREAKDOWN & PATHS PROGRESS -->
+        <div class="grid-layout cols-3 gap-4 margin-top-4">
+          <!-- Solved statistics difficulty breakdown -->
+          <div class="card glass-card" style="display: flex; flex-direction: column; gap: 0.8rem; justify-content: space-between;">
+            <h3 style="margin: 0;">Solved Statistics</h3>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; background-color: rgba(255, 255, 255, 0.01); border: 1px solid var(--border-glass); border-radius: 8px; padding: 0.6rem; margin: 0.2rem 0;">
+              <div>
+                <div style="font-size: 1.5rem; font-weight: 800;" id="profile-total-solved">0</div>
+                <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 500;">Total Solved</span>
+              </div>
+              <div style="text-align: right;">
+                <div style="font-size: 1.1rem; font-weight: 800; color: var(--accent-blue);" id="profile-solved-percent">0%</div>
+                <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 500;">Completions</span>
+              </div>
+            </div>
+
+            <!-- Easy, Medium, Hard breakdown bars -->
+            <div style="display: flex; flex-direction: column; gap: 0.7rem; font-size: 0.75rem;">
+              <div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.2rem;">
+                  <span style="color: #10b981; font-weight: 600;">Easy</span>
+                  <span style="color: var(--text-muted);" id="easy-breakdown-text">0/0</span>
+                </div>
+                <div class="progress-bar-outer" style="height: 5px; background-color: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.1);">
+                  <div id="easy-breakdown-bar" class="progress-bar-inner" style="width: 0%; height: 100%; background-color: #10b981;"></div>
+                </div>
+              </div>
+              <div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.2rem;">
+                  <span style="color: #f59e0b; font-weight: 600;">Medium</span>
+                  <span style="color: var(--text-muted);" id="medium-breakdown-text">0/0</span>
+                </div>
+                <div class="progress-bar-outer" style="height: 5px; background-color: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.1);">
+                  <div id="medium-breakdown-bar" class="progress-bar-inner" style="width: 0%; height: 100%; background-color: #f59e0b;"></div>
+                </div>
+              </div>
+              <div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.2rem;">
+                  <span style="color: #ef4444; font-weight: 600;">Hard</span>
+                  <span style="color: var(--text-muted);" id="hard-breakdown-text">0/0</span>
+                </div>
+                <div class="progress-bar-outer" style="height: 5px; background-color: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.1);">
+                  <div id="hard-breakdown-bar" class="progress-bar-inner" style="width: 0%; height: 100%; background-color: #ef4444;"></div>
+                </div>
+              </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 0.5rem; border-top: 1px solid var(--border-glass); padding-top: 0.6rem; font-size: 0.8rem; text-align: center;">
+              <div style="display: flex; flex-direction: column;">
+                <span id="profile-streak-count" style="font-weight: 700;">0 Days</span>
+                <span style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase;">Streak</span>
+              </div>
+              <div style="display: flex; flex-direction: column;">
+                <span id="profile-xp-count" style="font-weight: 700;">0 XP</span>
+                <span style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase;">Total XP</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Detailed Paths Progress Card -->
+          <div class="card glass-card col-span-2" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <h3 style="margin: 0 0 0.5rem 0;">Mastery Quest Paths Completion</h3>
+            <div class="paths-progress-list" id="profile-paths-completed" style="display: flex; flex-direction: column; gap: 0.8rem; justify-content: center; height: 100%;">
+              <!-- Dynamically populated in app.js -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Full-Width Heatmap Card (Occopies its own full row) -->
+        <div class="card glass-card margin-top-4 heatmap-card-full" style="width: 100%; overflow: visible;">
+          <div class="heatmap-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 10px;">
+            <div>
+              <h3 style="margin: 0;">Submissions Heat Map</h3>
+              <p class="text-muted" style="margin: 0.2rem 0 0 0;">Your daily coding contributions and submissions.</p>
+            </div>
+            <div class="heatmap-filter">
+              <select id="heatmap-range-select" style="background-color: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); color: var(--text-main); padding: 0.4rem 0.8rem; border-radius: 6px; font-family: inherit; font-size: 0.85rem; cursor: pointer; outline: none; transition: var(--transition-smooth);" onmouseover="this.style.backgroundColor='rgba(255,255,255,0.1)'" onmouseout="this.style.backgroundColor='rgba(255,255,255,0.05)'">
+                <option value="6">Last 6 Months</option>
+                <option value="12">Last 1 Year</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="heatmap-container-horizontal" style="display: flex; gap: 10px; align-items: flex-start; margin-top: 1.5rem; overflow-x: auto; padding-bottom: 0.5rem;">
+            <!-- Weekday labels column -->
+            <div class="heatmap-weekdays" style="display: grid; grid-template-rows: repeat(7, 13px); gap: 4px; font-size: 0.75rem; color: var(--text-muted); font-weight: 600; width: 32px; text-align: right; padding-right: 6px; align-items: center; padding-top: 0;">
+              <span>Thu</span>
+              <span></span>
+              <span>Sat</span>
+              <span></span>
+              <span>Mon</span>
+              <span></span>
+              <span>Wed</span>
+            </div>
+            
+            <!-- Calendar grid & Months body -->
+            <div class="heatmap-calendar-body" style="display: flex; flex-direction: column;">
+              <div class="heatmap-grid" id="heatmap-calendar-grid">
+                <!-- Heatmap cells dynamically created -->
+              </div>
+              <div class="heatmap-months" id="heatmap-months-container" style="display: flex; font-size: 0.75rem; color: var(--text-muted); margin-top: 8px; position: relative; height: 18px;">
+                <!-- Dynamically populated in app.js -->
+              </div>
+            </div>
+          </div>
+          
+          <!-- Legend row -->
+          <div class="heatmap-legend-row" style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+            <div class="heatmap-legend" style="display: flex; align-items: center; gap: 5px; font-size: 0.75rem; color: var(--text-muted);">
+              <span>Less</span>
+              <span class="legend-box level-0" style="width: 13px; height: 13px; border-radius: 1px;"></span>
+              <span class="legend-box level-1" style="width: 13px; height: 13px; border-radius: 1px;"></span>
+              <span class="legend-box level-2" style="width: 13px; height: 13px; border-radius: 1px;"></span>
+              <span class="legend-box level-3" style="width: 13px; height: 13px; border-radius: 1px;"></span>
+              <span class="legend-box level-4" style="width: 13px; height: 13px; border-radius: 1px;"></span>
+              <span>More</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-layout cols-3 gap-4 margin-top-4">
+          <!-- Earned Badges Card -->
+          <div class="card glass-card col-span-2">
+            <h3>Earned Badges</h3>
+            <div class="badges-container" id="profile-badges-list">
+              <!-- Badges dynamically rendered -->
+              <div class="empty-state" id="empty-badges">
+                <i class="fa-solid fa-ribbon"></i>
+                <p>No badges earned yet. Complete Arena Trials to earn badges.</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Contests Completed Card -->
+          <div class="card glass-card">
+            <h3>Contest Participations</h3>
+            <div class="contests-progress-list" id="profile-contests-completed" style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.8rem;">
+              <!-- Dynamically populated in app.js -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- IDE VIEW (Split Screen) -->
+      <section id="view-ide" class="content-view full-height-view">
+        <div class="ide-layout">
+          <!-- Left Panel: Problem details & Test Cases -->
+          <div class="ide-left-pane">
+            <div class="ide-pane-header">
+              <button class="ide-tab active" data-ide-tab="problem">Problem Description</button>
+              <button class="ide-tab" data-ide-tab="testcases">Test Cases</button>
+            </div>
+            
+            <div class="ide-pane-content">
+              <!-- Problem Tab -->
+              <div id="ide-tab-problem-content" class="tab-content active">
+                <div class="problem-meta">
+                  <span class="difficulty-tag" id="problem-difficulty">Easy</span>
+                  <span class="problem-points" id="problem-points-badge">+50 XP</span>
+                </div>
+                <h2 id="problem-title">Two Sum</h2>
+                <div class="problem-description" id="problem-description-content">
+                  <!-- Loaded dynamically -->
+                </div>
+                <div class="problem-examples" id="problem-examples-content">
+                  <!-- Examples loaded dynamically -->
+                </div>
+              </div>
+
+              <!-- Testcases Tab -->
+              <div id="ide-tab-testcases-content" class="tab-content">
+                <h3>Testcases</h3>
+                <div class="testcase-selector" id="testcases-list">
+                  <!-- Loaded dynamically -->
+                </div>
+                <div class="testcase-details" id="testcase-details-box">
+                  <div class="detail-row">
+                    <label>Input:</label>
+                    <pre id="testcase-input-display"></pre>
+                  </div>
+                  <div class="detail-row">
+                    <label>Expected Output:</label>
+                    <pre id="testcase-expected-display"></pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Middle Panel: Editor & Output -->
+          <div class="ide-editor-pane">
+            <div class="editor-header">
+              <div class="editor-lang-selector">
+                <label for="lang-select">Language:</label>
+                <select id="lang-select">
+                  <option value="python">Python 3</option>
+                  <option value="cpp">C++ (Clang)</option>
+                  <option value="c">C (GCC)</option>
+                  <option value="go">Go Lang</option>
+                </select>
+              </div>
+              <div class="editor-actions">
+                <button class="btn btn-secondary btn-sm" id="btn-reset-code">
+                  <i class="fa-solid fa-rotate-left"></i> Reset
+                </button>
+                <button class="btn btn-secondary btn-sm" id="btn-ask-ai">
+                  <i class="fa-solid fa-robot text-neon-green animate-pulse"></i> Ask AI Assistant
+                </button>
+              </div>
+            </div>
+
+            <!-- CodeMirror Editor Anchor -->
+            <div class="editor-editor-container">
+              <textarea id="code-editor-textarea"></textarea>
+            </div>
+
+            <!-- Output Panel -->
+            <div class="editor-output-container">
+              <div class="output-header">
+                <span>Execution Console</span>
+                <button class="btn-clear-console" onclick="document.getElementById('console-log').innerText = ''">Clear</button>
+              </div>
+              <div class="output-body">
+                <pre id="console-log">Console outputs will appear here when you run code...</pre>
+              </div>
+              <div class="output-actions">
+                <button class="btn btn-secondary" id="btn-run-code">
+                  <i class="fa-solid fa-play"></i> Run Code
+                </button>
+                <button class="btn btn-primary" id="btn-submit-code">
+                  <i class="fa-solid fa-cloud-arrow-up"></i> Submit Solution
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Chat Drawer Panel -->
+          <div class="ide-ai-drawer" id="ai-chat-drawer">
+            <div class="ai-header">
+              <div class="ai-bot-avatar">
+                <i class="fa-solid fa-robot"></i>
+              </div>
+              <div class="ai-title-details">
+                <h4>Codify AI Mentor</h4>
+                <span class="status-online"><span class="pulse-dot"></span> Online</span>
+              </div>
+              <button class="btn-close-drawer" id="btn-close-ai">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+            <div class="ai-chat-messages" id="ai-messages-container">
+              <div class="message system-msg">
+                <div class="msg-content">
+                  <p>Welcome! I'm your Codify AI Mentor. I can explain the problem, suggest code structures, help fix syntax/runtime errors, or nudge you toward the optimal time complexity. I will never write the final code for you, but I'll guide you step-by-step!</p>
+                </div>
+              </div>
+            </div>
+            <div class="ai-input-area">
+              <div class="ai-suggestions" id="ai-suggested-prompts">
+                <button class="suggestion-chip" data-query="Explain the problem logic">Explain problem</button>
+                <button class="suggestion-chip" data-query="Give me a hint on time complexity">Optimize hints</button>
+                <button class="suggestion-chip" data-query="Check my code for syntax errors">Check bugs</button>
+              </div>
+              <div class="input-row">
+                <textarea id="ai-input-box" placeholder="Ask details, request hints, analyze code..."></textarea>
+                <button id="btn-send-ai"><i class="fa-solid fa-paper-plane"></i></button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Submit Overlay Dialog (Success/Fail modals) -->
+  <div class="modal-overlay" id="submission-modal">
+    <div class="modal-content glass-card card">
+      <button class="modal-close" onclick="document.getElementById('submission-modal').classList.remove('active')">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <div class="modal-body text-center">
+        <!-- Will be dynamically populated with details -->
+        <div id="modal-status-icon"></div>
+        <h2 id="modal-status-title">Accepted</h2>
+        <p id="modal-status-desc" class="text-muted">All 10/10 test cases passed.</p>
+        
+        <div class="testcase-grid-summary" id="modal-testcase-dots">
+          <!-- Small green/red dots representing test cases -->
+        </div>
+
+        <div class="modal-stats-row">
+          <div class="modal-stat">
+            <label>Runtime</label>
+            <span id="modal-stat-time">12ms</span>
+          </div>
+          <div class="modal-stat">
+            <label>Score</label>
+            <span id="modal-stat-score">+50 XP</span>
+          </div>
+        </div>
+
+        <button class="btn btn-primary margin-top-3 btn-full" onclick="document.getElementById('submission-modal').classList.remove('active'); app.switchView('quests')">
+          Next Challenge
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CodeMirror Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/javascript/javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/python/python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/clike/clike.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/go/go.min.js"></script>
+  
+  <!-- Skulpt Python Executor Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/skulpt/1.2.0/skulpt.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/skulpt/1.2.0/skulpt-stdlib.js"></script>
+
+  <!-- Core App Logic -->
+  <script src="app.js"></script>
+</body>
+</html>
